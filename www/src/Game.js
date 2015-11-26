@@ -52,8 +52,7 @@ BasicGame.Game.prototype = {
     // Here we load the assets required for our preloader (in this case a
     // background and a loading bar)
     //this.load.image('sea', 'asset/sea.jpg');
-    this.load.spritesheet('player', 'asset/surferCat.png', 50, 72);
-
+    this.load.spritesheet('player', 'asset/surferCat.png', 27, 36);
   },
 
   create: function () {
@@ -75,11 +74,12 @@ BasicGame.Game.prototype = {
 
   setupPlayer: function(){
     this.player = this.add.sprite(this.world.centerX, this.world.centerY, 'player');
+    this.player.scale.setTo(2, 2);
     this.player.anchor.setTo(0.5, 0.5);
     this.physics.enable(this.player, Phaser.Physics.ARCADE);
     this.player.body.collideWorldBounds = true;
     this.player.speed = 200;
-    this.player.body.setSize(36, 64, 2, 0);
+    this.player.body.setSize(54, 72, 2, 0);
     this.player.animations.add('surf', [1], 20, true);
     this.player.animations.add('surfLeft', [0], 20, true);
     this.player.animations.add('surfRight', [2], 20, true);
@@ -103,6 +103,27 @@ BasicGame.Game.prototype = {
       this.player.body.velocity.y = -this.player.speed;
     } else if (this.cursors.down.isDown) {
       this.player.body.velocity.y = this.player.speed;
+    }
+
+    var accelerometer = { x:null, y:null, z:null };
+
+    // Gestion de l'accelerometer
+    if(navigator.accelerometer) {
+      navigator.accelerometer.watchAcceleration(function(acc) {
+        accelerometer.x = acc.x;
+        accelerometer.y = acc.y;
+        accelerometer.z = acc.z;
+      }, null, { frequency: 40 }); // Toutes les 40ms
+
+      if(accelerometer.x < -1) {
+        this.player.play('surfRight');
+        this.player.body.velocity.x = this.player.speed;
+      } else if(accelerometer.x > 1) {
+        this.player.play('surfLeft');
+        this.player.body.velocity.x = -this.player.speed;
+      } else {
+        this.player.play('surf');
+      }
     }
   },
 

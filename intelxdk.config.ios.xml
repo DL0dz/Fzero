@@ -13,6 +13,7 @@
 <intelxdk:plugin intelxdk:name="Device" intelxdk:value="cordova-plugin-device" intelxdk:version="1.0.1" intelxdk:checksum="adfc61ba"/>
 <intelxdk:plugin intelxdk:name="Splashscreen" intelxdk:value="cordova-plugin-splashscreen" intelxdk:version="2.1.0" intelxdk:checksum="170efb68"/>
 <intelxdk:plugin intelxdk:name="Vibration" intelxdk:value="cordova-plugin-vibration" intelxdk:version="1.2.0" intelxdk:checksum="3394f863"/>
+<intelxdk:plugin intelxdk:name="Device Motion" intelxdk:value="cordova-plugin-device-motion" intelxdk:version="1.1.1" intelxdk:checksum="132d4c05"/>
 <preference name="ios-target" value="6"/>
 <preference name="ios-configuration" value="adhoc"/>
 <preference name="Fullscreen" value="true"/>
