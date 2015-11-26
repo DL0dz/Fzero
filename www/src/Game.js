@@ -69,12 +69,18 @@ BasicGame.Game.prototype = {
 
   update: function () {
     this.checkCollisions();
+    this.spawnEnemies();
     this.processPlayerInput();
     console.log(this.time.now);
   },
 
-  render: function() {
-    this.game.debug.body(this.shark);
+  render: function () {
+    this.sharkPool.forEachAlive(this.renderGroup, this);
+    this.game.debug.body(this.player);
+  },
+
+  renderGroup: function (member) {
+    this.game.debug.body(member);
   },
 
   setupPlayer: function(){
@@ -91,19 +97,36 @@ BasicGame.Game.prototype = {
   },
 
   setupEnemies: function(){
-    this.shark = this.add.sprite(50, this.player.y, 'shark');
-    this.shark.anchor.setTo(0.5, 0.5);
-    this.physics.enable(this.shark, Phaser.Physics.ARCADE);
-    this.shark.body.setSize(50, 36, 13, 10);
-    this.shark.speed = 300;
+    this.nextEnemyAt = 0;
+    this.enemyDelay = 1500;
+
+    this.sharkPool = this.add.group();
+    this.sharkPool.enableBody = true;
+    this.sharkPool.physicsBodyType = Phaser.Physics.ARCADE;
+    this.sharkPool.createMultiple(10, 'shark');
+    this.sharkPool.setAll('anchor.x', 0.5);
+    this.sharkPool.setAll('anchor.y', 0.5);
+    this.sharkPool.setAll('outOfBoundsKill', true);
+    this.sharkPool.setAll('checkWorldBounds', true);
+    this.sharkPool.speed = 300;
+
+    // Set the animation for each sprite
+    this.sharkPool.forEach(function (shark) {
+      shark.body.setSize(50, 36, 15, 10);
+      shark.animations.add('attack', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 7, false);
+    });
+
+
+
+
+    //this.shark = this.add.sprite(50, this.player.y, 'shark');
+
     // this.shark.scale.x *= -1;
     // this.shark.body.setSize(50, 36, -10, 10);
-    this.shark.animations.add('attack', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 7, false);
-    this.shark.play('attack', 7, true, true);
   },
 
   checkCollisions: function () {
-    this.physics.arcade.overlap(this.player, this.shark, this.sharkEatPlayer, null, this);
+    this.physics.arcade.overlap(this.player, this.sharkPool, this.sharkEatPlayer, null, this);
     // if (this.bossApproaching === false) {
     //   this.physics.arcade.overlap(this.bulletPool, this.bossPool, this.enemyHit, null, this);
     //   this.physics.arcade.overlap(this.player, this.bossPool, this.playerHit, null, this);
@@ -128,6 +151,19 @@ BasicGame.Game.prototype = {
     } else if (this.cursors.down.isDown) {
       this.player.body.velocity.y = this.player.speed;
     }
+  },
+
+  spawnEnemies: function () {
+    if (this.nextEnemyAt < this.time.now && this.sharkPool.countDead() > 0) {
+      this.nextEnemyAt = this.time.now + this.enemyDelay;
+      var shark = this.sharkPool.getFirstExists(false);
+      // spawn at a random location top of the screen
+      shark.reset(this.rnd.integerInRange(20, 480), 0);
+      // also randomize the speed
+      shark.body.velocity.y = this.rnd.integerInRange(30, 60);
+      shark.play('attack', 7, false, true);
+    }
+
   },
 
   sharkEatPlayer: function () {
