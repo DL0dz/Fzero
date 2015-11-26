@@ -4,7 +4,7 @@
     "creationData": {
       "projectTypeName": "com.intel.xdk.projecttype.jsapp",
       "projectGuid": "7f093da4-9a49-47dc-b088-034a0b9bb0d7",
-      "lastModifiedDate": 1448460483249,
+      "lastModifiedDate": 1448541720823,
       "creationDate": 1448440713205
     },
     "sourceDirectory": "www",
@@ -103,6 +103,24 @@
           ]
         },
         "description": "Cordova Vibration Plugin",
+        "data": {},
+        "dependedBy": []
+      },
+      {
+        "id": "cordova-plugin-device-motion",
+        "name": "Device Motion",
+        "version": "1.1.1",
+        "originType": "cordova.io",
+        "origin": "cordova-plugin-device-motion",
+        "gitref": "",
+        "paramvals": {},
+        "sourceLocation": "plugins/cordova-plugin-device-motion",
+        "selectedState": "Included",
+        "checksum": "132d4c05",
+        "dependsOn": [],
+        "topLevel": true,
+        "permissions": {},
+        "description": "Cordova Device Motion Plugin",
         "data": {},
         "dependedBy": []
       }
