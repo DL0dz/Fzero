@@ -1,5 +1,8 @@
 /* globals Phaser:false */
 // create BasicGame Class
+
+var playerPos = {};
+
 BasicGame = {
 
 };
@@ -93,6 +96,9 @@ BasicGame.Game.prototype = {
     this.player.animations.add('surfLeft', [0], 20, true);
     this.player.animations.add('surfRight', [2], 20, true);
     this.player.play('surf');
+
+    console.log(this.player.width);
+    console.log(this.player.height);
   },
 
   setupEnemies: function(){
@@ -102,7 +108,7 @@ BasicGame.Game.prototype = {
     this.sharkPool = this.add.group();
     this.sharkPool.enableBody = true;
     this.sharkPool.physicsBodyType = Phaser.Physics.ARCADE;
-    this.sharkPool.createMultiple(10, 'shark');
+    this.sharkPool.createMultiple(5, 'shark');
     this.sharkPool.setAll('anchor.x', 0.5);
     this.sharkPool.setAll('anchor.y', 0.5);
     this.sharkPool.setAll('outOfBoundsKill', true);
@@ -121,7 +127,6 @@ BasicGame.Game.prototype = {
   },
 
   processPlayerInput: function() {
-    console.log(this.player.x, this.player.y)
     this.player.body.velocity.x = 0;
     this.player.body.velocity.y = 0;
 
@@ -139,43 +144,69 @@ BasicGame.Game.prototype = {
     } else if (this.cursors.down.isDown) {
       this.player.body.velocity.y = this.player.speed;
     }
+
+    // en global (caca), on réussi à le return mais pas à le récupérer dans spawnEnemies
+    playerPos.x = this.player.x;
+    playerPos.y = this.player.y;
   },
 
-  spawnEnemies: function (player) {
+  spawnEnemies: function () {
     if (this.nextEnemyAt < this.time.now && this.sharkPool.countDead() > 0) {
       this.nextEnemyAt = this.time.now + this.enemyDelay;
       var shark = this.sharkPool.getFirstExists(false);
-      shark.speed = 100;
+      shark.speed = 120;
       var startSharkX = this.rnd.integerInRange(0, this.world.width);
       var startSharkY = this.rnd.integerInRange(0, this.world.height);
 
-      // Apparition du requin de manière aléatoire
-      shark.reset(startSharkX, startSharkY);
+      /*
+      1 requin sur 4 en moyenne prendra une direction inverse et se dirigera vers l'extérieur du device
+      Cela empêche le joueur de camper dans les coins sans ne jamais se faire toucher
+      */
+      var reverseSharkDirection = this.rnd.integerInRange(1, 4) < 1 ? true : false;
 
-      if (startSharkX <= (this.world.width/2)) {
-        shark.body.setSize(50, 36, 15, 10);
-        shark.body.velocity.x = shark.speed;
-        shark.scale.x *= shark.scale.x > 0 ? 1 : -1;
+      var sharkDistanceToPlayerX = Math.abs(startSharkX - playerPos.x);
+      var sharkDistanceToPlayerY = Math.abs(startSharkY - playerPos.y);
 
-      } else {
-        shark.scale.x *= shark.scale.x < 0 ? 1 : -1;
-        shark.body.setSize(50, 36, -10, 10);
-        shark.body.velocity.x = -shark.speed;
+      // le requin ne doit pas apparaitre sur le joueur
+      if (sharkDistanceToPlayerX > 20 && sharkDistanceToPlayerY > 20) {
+        // Apparition du requin de manière aléatoire
+        shark.reset(startSharkX, startSharkY);
+
+        if (startSharkX <= (this.world.width/2)) {
+          reverseSharkDirection ? this.sharkToLeft(shark) : this.sharkToRight(shark);
+        } else {
+          reverseSharkDirection ? this.sharkToRight(shark) : this.sharkToLeft(shark);
+        }
+
+        if (startSharkY <= (this.world.height/2)) {
+          shark.body.velocity.y = reverseSharkDirection ? -shark.speed : shark.speed;
+        } else {
+          shark.body.velocity.y = reverseSharkDirection ? shark.speed : -shark.speed;
+        }
+
+        shark.play('attack', 7, false, true);
       }
 
-      if (startSharkY <= (this.world.height/2)) {
-        shark.body.velocity.y = shark.speed;
-      } else {
-        shark.body.velocity.y = -shark.speed;
-      }
-      // also randomize the speed
-      shark.play('attack', 7, false, true);
     }
 
   },
 
   sharkEatPlayer: function () {
     this.player.kill();
+  },
+
+  sharkToLeft: function (shark) {
+    // on inverse la position du sprite (mode mirroir)
+    shark.scale.x *= shark.scale.x < 0 ? 1 : -1;
+    // on déplace la zone de collision pour être en adéquation avec le sprite
+    shark.body.setSize(50, 36, -10, 10);
+    shark.body.velocity.x = -shark.speed;
+  },
+
+  sharkToRight: function (shark) {
+    shark.body.setSize(50, 36, 15, 10);
+    shark.scale.x *= shark.scale.x > 0 ? 1 : -1;
+    shark.body.velocity.x = shark.speed;
   },
 
 
