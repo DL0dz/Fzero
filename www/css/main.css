@@ -1,10 +1,10 @@
-/* line 88, bg/*.png */
+/*
 .bg-sprite {
   background-image: url('/asset/bg-sb30b4f9406.png');
   background-repeat: no-repeat;
 }
 
-/* line 4, ../sass/_sprites.scss */
+
 .bg-sprite {
   display: block;
   height: 264px;
@@ -16,4 +16,11 @@
   100% {
     background-position: 0 -1584px;
   }
+}*/
+
+
+body {
+  margin: 0px 0px 1px 0px;  the extra 1px allows the iOS inner/outer check to work
+  background: #000;
+  overflow: hidden;
 }

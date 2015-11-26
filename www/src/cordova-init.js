@@ -8,7 +8,11 @@
  */
 /* jshint browser:true */
 // Listen to deviceready event which is fired when Cordova plugins are ready
-document.addEventListener('deviceready', function() {
-    // Call splashscreen API to hide the splash.
-    navigator.splashscreen.hide();
-});
+
+
+
+//document.addEventListener('deviceready', function() {
+  // Call splashscreen API to hide the splash.
+  //navigator.splashscreen.hide();
+  app.initialize();
+//});
