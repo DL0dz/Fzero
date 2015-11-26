@@ -77,8 +77,8 @@ BasicGame.Game.prototype = {
   },
 
   render: function () {
-    this.sharkPool.forEachAlive(this.renderGroup, this);
-    this.game.debug.body(this.player);
+    // this.sharkPool.forEachAlive(this.renderGroup, this);
+    // this.game.debug.body(this.player);
   },
 
   renderGroup: function (member) {
@@ -97,13 +97,11 @@ BasicGame.Game.prototype = {
     this.player.animations.add('surfRight', [2], 20, true);
     this.player.play('surf');
 
-    console.log(this.player.width);
-    console.log(this.player.height);
   },
 
   setupEnemies: function(){
     this.nextEnemyAt = 0;
-    this.enemyDelay = 500;
+    this.enemyDelay = 3000;
 
     this.sharkPool = this.add.group();
     this.sharkPool.enableBody = true;
@@ -113,6 +111,7 @@ BasicGame.Game.prototype = {
     this.sharkPool.setAll('anchor.y', 0.5);
     this.sharkPool.setAll('outOfBoundsKill', true);
     this.sharkPool.setAll('checkWorldBounds', true);
+    this.sharkPool.speed = 120;
 
     // Set the animation for each sprite
     this.sharkPool.forEach(function (shark) {
@@ -145,12 +144,17 @@ BasicGame.Game.prototype = {
       this.player.body.velocity.y = this.player.speed;
     }
 
-    // en global (caca), on réussi à le return mais pas à le récupérer dans spawnEnemies
+    // en global (caca), nous ne sommes pas parvenu à le récupérer dans spawnEnemies
     playerPos.x = this.player.x;
     playerPos.y = this.player.y;
   },
 
   spawnEnemies: function () {
+    // on réduit l'intervalle d'appartion des ennemis très légèrement à chaque frame
+    if (this.enemyDelay > 500) {
+      this.enemyDelay -= 0.2;
+    }
+
     if (this.nextEnemyAt < this.time.now && this.sharkPool.countDead() > 0) {
       this.nextEnemyAt = this.time.now + this.enemyDelay;
       var shark = this.sharkPool.getFirstExists(false);
