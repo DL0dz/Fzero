@@ -104,6 +104,27 @@ BasicGame.Game.prototype = {
     } else if (this.cursors.down.isDown) {
       this.player.body.velocity.y = this.player.speed;
     }
+
+    var accelerometer = { x:null, y:null, z:null };
+    
+    // Gestion de l'accelerometer
+    if(navigator.accelerometer) {
+      navigator.accelerometer.watchAcceleration(function(acc) {
+        accelerometer.x = acc.x;
+        accelerometer.y = acc.y;
+        accelerometer.z = acc.z;
+      }, null, { frequency: 40 }); // Toutes les 40ms
+
+      if(accelerometer.x > 2) {
+        this.player.play('surfRight');
+        this.player.body.velocity.x = this.player.speed;
+      } else if(accelerometer.x < -2) {
+        this.player.play('surfLeft');
+        this.player.body.velocity.x = -this.player.speed;
+      } else {
+        this.player.play('surf');
+      }
+    }
   },
 
 };
