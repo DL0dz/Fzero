@@ -32,11 +32,11 @@ BasicGame.Game.prototype = {
         this.scale.pageAlignHorizontally = true;
         this.scale.pageAlignVertically = true;
         // Force the orientation in landscape or portrait.
-        // * Set first to true to force landscape. 
+        // * Set first to true to force landscape.
         // * Set second to true to force portrait.
         this.scale.forceOrientation(false, true);
         // Sets the callback that will be called when the window resize event
-        // occurs, or if set the parent container changes dimensions. Use this 
+        // occurs, or if set the parent container changes dimensions. Use this
         // to handle responsive game layout options. Note that the callback will
         // only be called if the ScaleManager.scaleMode is set to RESIZE.
         this.scale.setResizeCallback(this.gameResized, this);
@@ -50,30 +50,21 @@ BasicGame.Game.prototype = {
     },
 
     preload: function () {
-
-        // Here we load the assets required for our preloader (in this case a 
+        // Here we load the assets required for our preloader (in this case a
         // background and a loading bar)
-        this.load.image('logo', 'asset/phaser.png');
+        //this.load.image('sea', 'asset/sea.jpg');
+        this.load.spritesheet('player', 'asset/surferCat.png', 50, 72);
+
     },
 
     create: function () {
-        // Add logo to the center of the stage
-        this.logo = this.add.sprite(
-            this.world.centerX, // (centerX, centerY) is the center coordination
-            this.world.centerY,
-            'logo');
-        // Set the anchor to the center of the sprite
-        this.logo.anchor.setTo(0.5, 0.5);
-
+        this.stage.backgroundColor = '#66CCFF';
+      //this.sea = this.add.tileSprite(0, 0, 1024, 768, 'sea');
+        this.player = this.add.sprite(this.world.centerX, this.world.centerY, 'player');
+        this.player.anchor.setTo(0.5, 0.5);
     },
 
-    gameResized: function (width, height) {
-
-        // This could be handy if you need to do any extra processing if the 
-        // game resizes. A resize could happen if for example swapping 
-        // orientation on a device or resizing the browser window. Note that 
-        // this callback is only really useful if you use a ScaleMode of RESIZE 
-        // and place it inside your main game state.
+    update: function () {
 
     }
 
