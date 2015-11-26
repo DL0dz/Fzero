@@ -1,0 +1,13 @@
+// Compass Sprites
+@import "bg/*.png";
+
+.bg-sprite {
+  display: block;
+  height: 264px;
+  background-repeat: repeat; 
+  animation: play 1s steps(6) infinite;
+}
+
+@keyframes play {
+   100% { background-position: 0 -1584px; }
+}

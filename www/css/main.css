@@ -1,0 +1,19 @@
+/* line 88, bg/*.png */
+.bg-sprite {
+  background-image: url('/asset/bg-sb30b4f9406.png');
+  background-repeat: no-repeat;
+}
+
+/* line 4, ../sass/_sprites.scss */
+.bg-sprite {
+  display: block;
+  height: 264px;
+  background-repeat: repeat;
+  animation: play 1s steps(6) infinite;
+}
+
+@keyframes play {
+  100% {
+    background-position: 0 -1584px;
+  }
+}
