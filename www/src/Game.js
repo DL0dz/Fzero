@@ -61,10 +61,12 @@ BasicGame.Game.prototype = {
     //this.sea = this.add.tileSprite(0, 0, 1024, 768, 'sea');
     this.setupPlayer();
 
+    this.cursors = this.input.keyboard.createCursorKeys();
+
   },
 
   update: function () {
-
+    this.processPlayerInput();
   },
 
   render: function() {
@@ -76,12 +78,32 @@ BasicGame.Game.prototype = {
     this.player.anchor.setTo(0.5, 0.5);
     this.physics.enable(this.player, Phaser.Physics.ARCADE);
     this.player.body.collideWorldBounds = true;
-    this.player.speed = 100;
+    this.player.speed = 200;
     this.player.body.setSize(36, 64, 2, 0);
     this.player.animations.add('surf', [1], 20, true);
     this.player.animations.add('surfLeft', [0], 20, true);
     this.player.animations.add('surfRight', [2], 20, true);
     this.player.play('surf');
+  },
+
+  processPlayerInput: function() {
+    this.player.body.velocity.x = 0;
+    this.player.body.velocity.y = 0;
+
+    if (this.cursors.left.isDown) {
+      this.player.play('surfLeft');
+      this.player.body.velocity.x = -this.player.speed;
+    } else if (this.cursors.right.isDown) {
+      this.player.play('surfRight');
+      this.player.body.velocity.x = this.player.speed;
+    } else {
+      this.player.play('surf');
+    }
+    if (this.cursors.up.isDown) {
+      this.player.body.velocity.y = -this.player.speed;
+    } else if (this.cursors.down.isDown) {
+      this.player.body.velocity.y = this.player.speed;
+    }
   },
 
 };
