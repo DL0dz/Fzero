@@ -68,11 +68,13 @@ BasicGame.Game.prototype = {
   },
 
   update: function () {
+    this.checkCollisions();
     this.processPlayerInput();
+    console.log(this.time.now);
   },
 
   render: function() {
-    //this.game.debug.body(this.player);
+    this.game.debug.body(this.shark);
   },
 
   setupPlayer: function(){
@@ -89,12 +91,23 @@ BasicGame.Game.prototype = {
   },
 
   setupEnemies: function(){
-    this.shark = this.add.sprite(this.world.centerX, 50, 'shark');
+    this.shark = this.add.sprite(50, this.player.y, 'shark');
     this.shark.anchor.setTo(0.5, 0.5);
     this.physics.enable(this.shark, Phaser.Physics.ARCADE);
+    this.shark.body.setSize(50, 36, 13, 10);
     this.shark.speed = 300;
-    this.shark.animations.add('attack', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 8, false);
-    this.shark.play('attack');
+    // this.shark.scale.x *= -1;
+    // this.shark.body.setSize(50, 36, -10, 10);
+    this.shark.animations.add('attack', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 7, false);
+    this.shark.play('attack', 7, true, true);
+  },
+
+  checkCollisions: function () {
+    this.physics.arcade.overlap(this.player, this.shark, this.sharkEatPlayer, null, this);
+    // if (this.bossApproaching === false) {
+    //   this.physics.arcade.overlap(this.bulletPool, this.bossPool, this.enemyHit, null, this);
+    //   this.physics.arcade.overlap(this.player, this.bossPool, this.playerHit, null, this);
+    // }
   },
 
   processPlayerInput: function() {
@@ -116,5 +129,10 @@ BasicGame.Game.prototype = {
       this.player.body.velocity.y = this.player.speed;
     }
   },
+
+  sharkEatPlayer: function () {
+    this.player.kill();
+  },
+
 
 };
