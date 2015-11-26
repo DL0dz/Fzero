@@ -70,7 +70,7 @@ BasicGame.Game.prototype = {
   },
 
   render: function() {
-    this.game.debug.body(this.player);
+    //this.game.debug.body(this.player);
   },
 
   setupPlayer: function(){

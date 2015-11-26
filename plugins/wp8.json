@@ -10,7 +10,8 @@
         "cordova-plugin-device": {},
         "cordova-plugin-splashscreen": {},
         "cordova-plugin-statusbar": {},
-        "cordova-plugin-vibration": {}
+        "cordova-plugin-vibration": {},
+        "cordova-plugin-device-motion": {}
     },
     "dependent_plugins": {}
 }
