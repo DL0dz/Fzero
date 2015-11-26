@@ -53,6 +53,7 @@ BasicGame.Game.prototype = {
     // background and a loading bar)
     //this.load.image('sea', 'asset/sea.jpg');
     this.load.spritesheet('player', 'asset/surferCat.png', 50, 72);
+    this.load.spritesheet('shark', 'asset/shark.png', 100, 80);
 
   },
 
@@ -60,6 +61,7 @@ BasicGame.Game.prototype = {
     this.stage.backgroundColor = '#66CCFF';
     //this.sea = this.add.tileSprite(0, 0, 1024, 768, 'sea');
     this.setupPlayer();
+    this.setupEnemies();
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -84,6 +86,15 @@ BasicGame.Game.prototype = {
     this.player.animations.add('surfLeft', [0], 20, true);
     this.player.animations.add('surfRight', [2], 20, true);
     this.player.play('surf');
+  },
+
+  setupEnemies: function(){
+    this.shark = this.add.sprite(this.world.centerX, 50, 'shark');
+    this.shark.anchor.setTo(0.5, 0.5);
+    this.physics.enable(this.shark, Phaser.Physics.ARCADE);
+    this.shark.speed = 300;
+    this.shark.animations.add('attack', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 8, false);
+    this.shark.play('attack');
   },
 
   processPlayerInput: function() {
