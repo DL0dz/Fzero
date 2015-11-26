@@ -62,6 +62,10 @@ BasicGame.Game.prototype = {
       //this.sea = this.add.tileSprite(0, 0, 1024, 768, 'sea');
         this.player = this.add.sprite(this.world.centerX, this.world.centerY, 'player');
         this.player.anchor.setTo(0.5, 0.5);
+        this.player.animations.add('surf', [1], 20, true);
+        this.player.animations.add('surfLeft', [0], 20, true);
+        this.player.animations.add('surfRight', [2], 20, true);
+        this.player.play('surf');
     },
 
     update: function () {
