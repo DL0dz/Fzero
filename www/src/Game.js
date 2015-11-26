@@ -8,6 +8,8 @@ BasicGame = {
 BasicGame.Game = function (game) {
 };
 
+var music;
+
 // set Game function prototype
 BasicGame.Game.prototype = {
 
@@ -53,6 +55,7 @@ BasicGame.Game.prototype = {
     // background and a loading bar)
     //this.load.image('sea', 'asset/sea.jpg');
     this.load.spritesheet('player', 'asset/surferCat.png', 27, 36);
+    this.load.audio('jaws', ['asset/main.mp3', 'asset/main.ogg']);
   },
 
   create: function () {
@@ -61,7 +64,10 @@ BasicGame.Game.prototype = {
     this.setupPlayer();
 
     this.cursors = this.input.keyboard.createCursorKeys();
-
+    this.music = this.add.audio('jaws');
+    this.music.autoplay = true;
+    this.music.loop = true;
+    this.music.play();
   },
 
   update: function () {
@@ -70,6 +76,7 @@ BasicGame.Game.prototype = {
 
   render: function() {
     //this.game.debug.body(this.player);
+    this.game.debug.soundInfo(this.music, 20, 32);
   },
 
   setupPlayer: function(){

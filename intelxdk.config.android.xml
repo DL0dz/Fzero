@@ -9,6 +9,14 @@
 <author>Intel XDK</author>
 <content src="index.html"/>
 <access origin="*"/>
+<icon platform="android" src="icons/icon-36x36.png" density="ldpi" width="36" height="36"/>
+<icon platform="android" src="icons/icon-48x48.png" density="mdpi" width="48" height="48"/>
+<icon platform="android" src="icons/icon-72x72.png" density="hdpi" width="72" height="72"/>
+<icon platform="android" src="icons/icon-96x96.png" density="xhdpi" width="96" height="96"/>
+<splash platform="android" src="splashscreen-320x426.png" density="ldpi" width="320" height="426" orientation="portrait"/>
+<splash platform="android" src="splashscreen-320x470.png" density="mdpi" width="320" height="470" orientation="portrait"/>
+<splash platform="android" src="splashscreen-480x640.png" density="hdpi" width="480" height="640" orientation="portrait"/>
+<splash platform="android" src="splashscreen/splashscreen-720x960.png" density="xhdpi" width="720" height="960" orientation="portrait"/>
 <intelxdk:plugin intelxdk:name="StatusBar" intelxdk:value="cordova-plugin-statusbar" intelxdk:version="1.0.0" intelxdk:checksum="b4e7aac6"/>
 <intelxdk:plugin intelxdk:name="Device" intelxdk:value="cordova-plugin-device" intelxdk:version="1.0.1" intelxdk:checksum="adfc61ba"/>
 <intelxdk:plugin intelxdk:name="Splashscreen" intelxdk:value="cordova-plugin-splashscreen" intelxdk:version="2.1.0" intelxdk:checksum="170efb68"/>
@@ -20,6 +28,7 @@
 <preference name="android-installLocation" value="auto"/>
 <preference name="Fullscreen" value="true"/>
 <preference name="Orientation" value="portrait"/>
+<preference name="splashscreen" value="splash"/>
 <!--creationInfo:{"projectTypeName":"com.intel.xdk.projecttype.jsapp"}-->
 <preference name="debuggable" value="false"/>
 <platform name="ios">

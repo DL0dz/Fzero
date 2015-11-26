@@ -3,6 +3,8 @@
     "projectSettingsVersion": "2.0.0",
     "currentBuildConfiguration": "Android-Crosswalk",
     "projectFiles": {},
-    "projectDirectories": {}
+    "projectDirectories": {},
+    "currentService": {},
+    "initialAutoPluginCount": 0
   }
 }

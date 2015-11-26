@@ -13,6 +13,6 @@
 
 document.addEventListener('deviceready', function() {
   // Call splashscreen API to hide the splash.
-  //navigator.splashscreen.hide();
+  navigator.splashscreen.show();
   app.initialize();
 });
