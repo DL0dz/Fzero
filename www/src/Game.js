@@ -69,9 +69,8 @@ BasicGame.Game.prototype = {
 
   update: function () {
     this.checkCollisions();
-    this.spawnEnemies();
     this.processPlayerInput();
-    console.log(this.time.now);
+    this.spawnEnemies();
   },
 
   render: function () {
@@ -98,7 +97,7 @@ BasicGame.Game.prototype = {
 
   setupEnemies: function(){
     this.nextEnemyAt = 0;
-    this.enemyDelay = 1500;
+    this.enemyDelay = 500;
 
     this.sharkPool = this.add.group();
     this.sharkPool.enableBody = true;
@@ -108,7 +107,6 @@ BasicGame.Game.prototype = {
     this.sharkPool.setAll('anchor.y', 0.5);
     this.sharkPool.setAll('outOfBoundsKill', true);
     this.sharkPool.setAll('checkWorldBounds', true);
-    this.sharkPool.speed = 300;
 
     // Set the animation for each sprite
     this.sharkPool.forEach(function (shark) {
@@ -116,24 +114,14 @@ BasicGame.Game.prototype = {
       shark.animations.add('attack', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 7, false);
     });
 
-
-
-
-    //this.shark = this.add.sprite(50, this.player.y, 'shark');
-
-    // this.shark.scale.x *= -1;
-    // this.shark.body.setSize(50, 36, -10, 10);
   },
 
   checkCollisions: function () {
     this.physics.arcade.overlap(this.player, this.sharkPool, this.sharkEatPlayer, null, this);
-    // if (this.bossApproaching === false) {
-    //   this.physics.arcade.overlap(this.bulletPool, this.bossPool, this.enemyHit, null, this);
-    //   this.physics.arcade.overlap(this.player, this.bossPool, this.playerHit, null, this);
-    // }
   },
 
   processPlayerInput: function() {
+    console.log(this.player.x, this.player.y)
     this.player.body.velocity.x = 0;
     this.player.body.velocity.y = 0;
 
@@ -153,14 +141,34 @@ BasicGame.Game.prototype = {
     }
   },
 
-  spawnEnemies: function () {
+  spawnEnemies: function (player) {
     if (this.nextEnemyAt < this.time.now && this.sharkPool.countDead() > 0) {
       this.nextEnemyAt = this.time.now + this.enemyDelay;
       var shark = this.sharkPool.getFirstExists(false);
-      // spawn at a random location top of the screen
-      shark.reset(this.rnd.integerInRange(20, 480), 0);
+      shark.speed = 100;
+      var startSharkX = this.rnd.integerInRange(0, this.world.width);
+      var startSharkY = this.rnd.integerInRange(0, this.world.height);
+
+      // Apparition du requin de manière aléatoire
+      shark.reset(startSharkX, startSharkY);
+
+      if (startSharkX <= (this.world.width/2)) {
+        shark.body.setSize(50, 36, 15, 10);
+        shark.body.velocity.x = shark.speed;
+        shark.scale.x *= shark.scale.x > 0 ? 1 : -1;
+
+      } else {
+        shark.scale.x *= shark.scale.x < 0 ? 1 : -1;
+        shark.body.setSize(50, 36, -10, 10);
+        shark.body.velocity.x = -shark.speed;
+      }
+
+      if (startSharkY <= (this.world.height/2)) {
+        shark.body.velocity.y = shark.speed;
+      } else {
+        shark.body.velocity.y = -shark.speed;
+      }
       // also randomize the speed
-      shark.body.velocity.y = this.rnd.integerInRange(30, 60);
       shark.play('attack', 7, false, true);
     }
 
