@@ -60,16 +60,29 @@ BasicGame.Game.prototype = {
     create: function () {
         this.stage.backgroundColor = '#66CCFF';
       //this.sea = this.add.tileSprite(0, 0, 1024, 768, 'sea');
-        this.player = this.add.sprite(this.world.centerX, this.world.centerY, 'player');
-        this.player.anchor.setTo(0.5, 0.5);
-        this.player.animations.add('surf', [1], 20, true);
-        this.player.animations.add('surfLeft', [0], 20, true);
-        this.player.animations.add('surfRight', [2], 20, true);
-        this.player.play('surf');
+        this.setupPlayer();
+
     },
 
     update: function () {
 
-    }
+    },
+
+    render: function() {
+      this.game.debug.body(this.player);
+    },
+
+    setupPlayer: function(){
+      this.player = this.add.sprite(this.world.centerX, this.world.centerY, 'player');
+      this.player.anchor.setTo(0.5, 0.5);
+      this.physics.enable(this.player, Phaser.Physics.ARCADE);
+      this.player.body.collideWorldBounds = true;
+      this.player.speed = 100;
+      this.player.body.setSize(36, 64, 2, 0);
+      this.player.animations.add('surf', [1], 20, true);
+      this.player.animations.add('surfLeft', [0], 20, true);
+      this.player.animations.add('surfRight', [2], 20, true);
+      this.player.play('surf');
+    },
 
 };
