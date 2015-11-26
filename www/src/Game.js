@@ -128,7 +128,31 @@ BasicGame.Game.prototype = {
       } else if(accelerometer.x > 1) {
         this.player.play('surfLeft');
         this.player.body.velocity.x = -this.player.speed;
-      } else {
+      } 
+
+      if(accelerometer.y < -1) {
+        this.player.play('surf');
+        this.player.body.velocity.y = -this.player.speed;
+        if(accelerometer.x < -1) {
+          this.player.play('surfRight');
+          this.player.body.velocity.x = this.player.speed;
+        } else if(accelerometer.x > 1) {
+          this.player.play('surfLeft');
+          this.player.body.velocity.x = -this.player.speed;
+        }
+      } else if(accelerometer.y > 1) {
+        this.player.play('surf');
+        this.player.body.velocity.y = this.player.speed;
+        if(accelerometer.x < -1) {
+          this.player.play('surfRight');
+          this.player.body.velocity.x = this.player.speed;
+        } else if(accelerometer.x > 1) {
+          this.player.play('surfLeft');
+          this.player.body.velocity.x = -this.player.speed;
+        }
+      } 
+
+      else {
         this.player.play('surf');
       }
     }
