@@ -76,6 +76,7 @@ BasicGame.Game.prototype = {
     this.processPlayerInput();
     this.spawnEnemies();
     this.processDelayedEffects();
+    this.addToScore();
   },
 
   render: function () {
@@ -123,7 +124,10 @@ BasicGame.Game.prototype = {
 
   },
 
-  setupText: function(){ //singe
+  setupText: function(){ // à mettre dans une fonction (pas le temps)
+    this.score = 0;
+    this.buoysScore = 0;
+
     this.instructions = this.add.text( this.world.centerX, this.world.height - 40,
       'Montre nous que tu n\'as pas besoin\nde te laisser pousser les cheveux\npour être un champion de la glisse !',
       { font: '20px monospace', fill: '#fff', align: 'center' }
@@ -138,7 +142,20 @@ BasicGame.Game.prototype = {
     this.instructions2.anchor.setTo(0.5, 0.5);
     this.instructions2.visible = false;
 
-    this.score = 0;
+    this.finalInfos = this.add.text( this.world.centerX, this.world.centerY - 20,
+      'Tu viens de nourrir les requins.\nL\'aventure s\'arrête ici.',
+      { font: '20px monospace', fill: '#fff', align: 'center' }
+    );
+    this.finalInfos.anchor.setTo(0.5, 0.5);
+    this.finalInfos.visible = false;
+
+    this.finalScore = this.add.text( this.world.centerX, this.world.centerY + 40,
+      'Ton score : ' + this.score,
+      { font: '32px monospace', fill: 'green', align: 'center' }
+    );
+    this.finalScore.anchor.setTo(0.5, 0.5);
+    this.finalScore.visible = false;
+
     this.scoreText = this.add.text(
     this.world.centerX, 20, '' + this.score,
     { font: '20px monospace', fill: '#fff', align: 'center' }
@@ -248,7 +265,19 @@ BasicGame.Game.prototype = {
     if (this.instructions2.exists && this.time.now > this.instExpire*1.5) {
       this.instructions2.destroy();
     }
+
+    if (!this.player.exists) {
+      this.finalInfos.visible = true;
+      this.finalScore.visible = true;
+      this.finalScore.text = 'Ton score : ' + this.score;
+    }
   },
 
+  addToScore: function () {
+    if (this.player.exists) {
+      scoreFinal = this.score = Math.round(this.time.now*0.001) + this.buoysScore;
+      this.scoreText.text = this.score;
+    }
+  },
 
 };
