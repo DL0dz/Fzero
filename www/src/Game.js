@@ -94,7 +94,7 @@ BasicGame.Game.prototype = {
   render: function () {
     //this.buoysPool.forEachAlive(this.renderGroup, this);
     //this.sharkPool.forEachAlive(this.renderGroup, this);
-     this.game.debug.body(this.player);
+     //this.game.debug.body(this.player);
   },
 
   renderGroup: function (member) {
