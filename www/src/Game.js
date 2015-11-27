@@ -1,4 +1,5 @@
 /* globals Phaser:false */
+var accelerometer = {};
 // create BasicGame Class
 BasicGame = {
 
@@ -64,6 +65,7 @@ BasicGame.Game.prototype = {
     this.setupPlayer();
 
     this.cursors = this.input.keyboard.createCursorKeys();
+
     this.music = this.add.audio('jaws');
     this.music.autoplay = true;
     this.music.loop = true;
@@ -76,7 +78,7 @@ BasicGame.Game.prototype = {
 
   render: function() {
     //this.game.debug.body(this.player);
-    this.game.debug.soundInfo(this.music, 20, 32);
+    //this.game.debug.soundInfo(this.music, 20, 32);
   },
 
   setupPlayer: function(){
@@ -97,64 +99,48 @@ BasicGame.Game.prototype = {
     this.player.body.velocity.x = 0;
     this.player.body.velocity.y = 0;
 
-    if (this.cursors.left.isDown) {
-      this.player.play('surfLeft');
-      this.player.body.velocity.x = -this.player.speed;
-    } else if (this.cursors.right.isDown) {
-      this.player.play('surfRight');
-      this.player.body.velocity.x = this.player.speed;
-    } else {
-      this.player.play('surf');
-    }
-    if (this.cursors.up.isDown) {
-      this.player.body.velocity.y = -this.player.speed;
-    } else if (this.cursors.down.isDown) {
-      this.player.body.velocity.y = this.player.speed;
-    }
+    // if (this.cursors.left.isDown) {
+    //   this.player.play('surfLeft');
+    //   this.player.body.velocity.x = -this.player.speed;
+    // } else if (this.cursors.right.isDown) {
+    //   this.player.play('surfRight');
+    //   this.player.body.velocity.x = this.player.speed;
+    // } else {
+    //   this.player.play('surf');
+    // }
+    // if (this.cursors.up.isDown) {
+    //   this.player.body.velocity.y = -this.player.speed;
+    // } else if (this.cursors.down.isDown) {
+    //   this.player.body.velocity.y = this.player.speed;
+    // }
 
-    var accelerometer = { x:null, y:null, z:null };
+
 
     // Gestion de l'accelerometer
-    if(navigator.accelerometer) {
+    if (navigator.accelerometer) {
       navigator.accelerometer.watchAcceleration(function(acc) {
         accelerometer.x = acc.x;
         accelerometer.y = acc.y;
-        accelerometer.z = acc.z;
-      }, null, { frequency: 40 }); // Toutes les 40ms
+      }, null); // pas de frequency pour une meilleure perf
 
-      if(accelerometer.x < -1) {
+      if (accelerometer.x < 0) {
         this.player.play('surfRight');
         this.player.body.velocity.x = this.player.speed;
-      } else if(accelerometer.x > 1) {
+      } else if (accelerometer.x >= 0) {
         this.player.play('surfLeft');
         this.player.body.velocity.x = -this.player.speed;
-      } 
+      }
 
-      if(accelerometer.y < -1) {
-        this.player.play('surf');
-        this.player.body.velocity.y = -this.player.speed;
-        if(accelerometer.x < -1) {
-          this.player.play('surfRight');
-          this.player.body.velocity.x = this.player.speed;
-        } else if(accelerometer.x > 1) {
-          this.player.play('surfLeft');
-          this.player.body.velocity.x = -this.player.speed;
-        }
-      } else if(accelerometer.y > 1) {
-        this.player.play('surf');
-        this.player.body.velocity.y = this.player.speed;
-        if(accelerometer.x < -1) {
-          this.player.play('surfRight');
-          this.player.body.velocity.x = this.player.speed;
-        } else if(accelerometer.x > 1) {
-          this.player.play('surfLeft');
-          this.player.body.velocity.x = -this.player.speed;
-        }
-      } 
-
-      else {
+      if (accelerometer.x >= -.8 && accelerometer.x <= .8) {
         this.player.play('surf');
       }
+
+      if(accelerometer.y < 0) {
+        this.player.body.velocity.y = -this.player.speed;
+      } else {
+        this.player.body.velocity.y = this.player.speed;
+      }
+
     }
   },
 
