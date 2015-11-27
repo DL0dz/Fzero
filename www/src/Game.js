@@ -12,8 +12,6 @@ BasicGame = {
 BasicGame.Game = function (game) {
 };
 
-var music;
-
 // set Game function prototype
 BasicGame.Game.prototype = {
 
@@ -29,7 +27,7 @@ BasicGame.Game.prototype = {
     // * SHOW_ALL
     // * RESIZE
     // See http://docs.phaser.io/Phaser.ScaleManager.html for full document
-    this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
     // If you wish to align your game in the middle of the page then you can
     // set this value to true. It will place a re-calculated margin-left
     // pixel value onto the canvas element which is updated on orientation /
@@ -85,7 +83,7 @@ BasicGame.Game.prototype = {
 
   render: function () {
     // this.sharkPool.forEachAlive(this.renderGroup, this);
-    //this.game.debug.soundInfo(this.music, 20, 32);
+    // this.game.debug.soundInfo(this.music, 20, 32);
     // this.game.debug.body(this.player);
   },
 
@@ -95,12 +93,11 @@ BasicGame.Game.prototype = {
 
   setupPlayer: function(){
     this.player = this.add.sprite(this.world.centerX, this.world.centerY, 'player');
-    this.player.scale.setTo(2, 2);
     this.player.anchor.setTo(0.5, 0.5);
     this.physics.enable(this.player, Phaser.Physics.ARCADE);
     this.player.body.collideWorldBounds = true;
-    this.player.speed = 200;
-    this.player.body.setSize(54, 72, 2, 0);
+    this.player.speed = 120;
+    this.player.body.setSize(27, 36, 1, 0);
     this.player.animations.add('surf', [1], 20, true);
     this.player.animations.add('surfLeft', [0], 20, true);
     this.player.animations.add('surfRight', [2], 20, true);
@@ -138,23 +135,6 @@ BasicGame.Game.prototype = {
     this.player.body.velocity.x = 0;
     this.player.body.velocity.y = 0;
 
-    // if (this.cursors.left.isDown) {
-    //   this.player.play('surfLeft');
-    //   this.player.body.velocity.x = -this.player.speed;
-    // } else if (this.cursors.right.isDown) {
-    //   this.player.play('surfRight');
-    //   this.player.body.velocity.x = this.player.speed;
-    // } else {
-    //   this.player.play('surf');
-    // }
-    // if (this.cursors.up.isDown) {
-    //   this.player.body.velocity.y = -this.player.speed;
-    // } else if (this.cursors.down.isDown) {
-    //   this.player.body.velocity.y = this.player.speed;
-    // }
-
-
-
     // Gestion de l'accelerometer
     if (navigator.accelerometer) {
       navigator.accelerometer.watchAcceleration(function(acc) {
@@ -170,7 +150,7 @@ BasicGame.Game.prototype = {
         this.player.body.velocity.x = -this.player.speed;
       }
 
-      if (accelerometer.x >= -.8 && accelerometer.x <= .8) {
+      if (accelerometer.x >= -1 && accelerometer.x <= 1) {
         this.player.play('surf');
       }
 
@@ -188,6 +168,9 @@ BasicGame.Game.prototype = {
   },
 
   spawnEnemies: function () {
+    if (this.time.now < 8000) {
+      return;
+    };
     // on réduit l'intervalle d'appartion des ennemis très légèrement à chaque frame
     if (this.enemyDelay > 500) {
       this.enemyDelay -= 0.2;
@@ -196,7 +179,7 @@ BasicGame.Game.prototype = {
     if (this.nextEnemyAt < this.time.now && this.sharkPool.countDead() > 0) {
       this.nextEnemyAt = this.time.now + this.enemyDelay;
       var shark = this.sharkPool.getFirstExists(false);
-      shark.speed = 120;
+      shark.speed = 80;
       var startSharkX = this.rnd.integerInRange(0, this.world.width);
       var startSharkY = this.rnd.integerInRange(0, this.world.height);
 
@@ -234,6 +217,7 @@ BasicGame.Game.prototype = {
   },
 
   sharkEatPlayer: function () {
+    navigator.vibrate([100, 30, 100]);
     this.player.kill();
   },
 
