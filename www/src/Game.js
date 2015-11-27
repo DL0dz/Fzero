@@ -57,6 +57,7 @@ BasicGame.Game.prototype = {
     //this.load.image('sea', 'asset/sea.jpg');
     this.load.spritesheet('player', 'asset/surferCat.png', 27, 36);
     this.load.spritesheet('shark', 'asset/shark.png', 100, 80);
+    this.load.audio('lose', ['asset/lose.ogg']);
 
   },
 
@@ -66,6 +67,7 @@ BasicGame.Game.prototype = {
     this.setupPlayer();
     this.setupEnemies();
     this.setupText();
+    this.setupAudio();
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -98,6 +100,8 @@ BasicGame.Game.prototype = {
     this.player.animations.add('surf', [1], 20, true);
     this.player.animations.add('surfLeft', [0], 20, true);
     this.player.animations.add('surfRight', [2], 20, true);
+    this.player.animations.add('rotate', [3, 4, 5], 20, false);
+    this.player.animations.add('died', [6], 20, true);
     this.player.play('surf');
 
   },
@@ -124,6 +128,11 @@ BasicGame.Game.prototype = {
 
   },
 
+  setupAudio: function () {
+    this.loseSFX = this.add.audio('lose');
+    this.buoysSFX = this.add.audio('yeah');
+  },
+
   setupText: function(){ // à mettre dans une fonction (pas le temps)
     this.score = 0;
     this.buoysScore = 0;
@@ -143,7 +152,7 @@ BasicGame.Game.prototype = {
     this.instructions2.visible = false;
 
     this.finalInfos = this.add.text( this.world.centerX, this.world.centerY - 20,
-      'Tu viens de nourrir les requins.\nL\'aventure s\'arrête ici.',
+      'Tu viens de nourrir les requins.\nMiam ! L\'aventure s\'arrête ici.',
       { font: '20px monospace', fill: '#fff', align: 'center' }
     );
     this.finalInfos.anchor.setTo(0.5, 0.5);
@@ -239,7 +248,9 @@ BasicGame.Game.prototype = {
 
   sharkEatPlayer: function () {
     this.player.kill();
+    this.loseSFX.play();
   },
+
 
   sharkToLeft: function (shark) {
     // on inverse la position du sprite (mode mirroir)
@@ -269,6 +280,7 @@ BasicGame.Game.prototype = {
     if (!this.player.exists) {
       this.finalInfos.visible = true;
       this.finalScore.visible = true;
+      this.scoreText.visible = false;
       this.finalScore.text = 'Ton score : ' + this.score;
     }
   },
