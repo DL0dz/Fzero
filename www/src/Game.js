@@ -57,15 +57,22 @@ BasicGame.Game.prototype = {
     // background and a loading bar)
     //this.load.image('sea', 'asset/sea.jpg');
     this.load.spritesheet('player', 'asset/surferCat.png', 27, 36);
-    this.load.audio('jaws', ['asset/main.mp3', 'asset/main.ogg']);
+    this.load.audio('jaws', ['asset/main.ogg']);
+    this.load.spritesheet('buoy', 'asset/buoy.png', 74, 14);
     this.load.spritesheet('shark', 'asset/shark.png', 100, 80);
+
+    this.load.audio('lose', ['asset/lose.ogg']);
+    this.load.audio('yeah', ['asset/buoy.ogg']);
   },
 
   create: function () {
     this.stage.backgroundColor = '#66CCFF';
     //this.sea = this.add.tileSprite(0, 0, 1024, 768, 'sea');
     this.setupPlayer();
+    this.setupBuoys();
     this.setupEnemies();
+    this.setupText();
+    this.setupAudio();
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -78,17 +85,20 @@ BasicGame.Game.prototype = {
   update: function () {
     this.checkCollisions();
     this.processPlayerInput();
+    this.spawnBuoys();
     this.spawnEnemies();
+    this.processDelayedEffects();
+    this.addToScore();
   },
 
   render: function () {
-    // this.sharkPool.forEachAlive(this.renderGroup, this);
-    // this.game.debug.soundInfo(this.music, 20, 32);
+    //this.buoysPool.forEachAlive(this.renderGroup, this);
+    //this.sharkPool.forEachAlive(this.renderGroup, this);
     // this.game.debug.body(this.player);
   },
 
   renderGroup: function (member) {
-    this.game.debug.body(member);
+    //this.game.debug.body(member);
   },
 
   setupPlayer: function(){
@@ -101,7 +111,30 @@ BasicGame.Game.prototype = {
     this.player.animations.add('surf', [1], 20, true);
     this.player.animations.add('surfLeft', [0], 20, true);
     this.player.animations.add('surfRight', [2], 20, true);
+    this.player.animations.add('rotate', [3, 4, 5], 20, false);
+    this.player.animations.add('died', [6], 20, true);
     this.player.play('surf');
+  },
+
+  setupBuoys: function(){
+    this.nextBuoyAt = 1000;
+    this.buoyDelay = 3000;
+
+    this.buoysPool = this.add.group();
+    this.buoysPool.enableBody = true;
+    this.buoysPool.physicsBodyType = Phaser.Physics.ARCADE;
+    this.buoysPool.createMultiple(1, 'buoy');
+    this.buoysPool.setAll('anchor.x', 0.5);
+    this.buoysPool.setAll('anchor.y', 0.5);
+    this.buoysPool.setAll('outOfBoundsKill', true);
+    this.buoysPool.setAll('checkWorldBounds', true);
+    this.buoysPool.speed = 250;
+
+    // Set the animation for each sprite
+    this.buoysPool.forEach(function (buoys) {
+      buoys.body.setSize(20, 5, 0, 0);
+      buoys.animations.add('display', [0], true);
+    });
 
   },
 
@@ -127,8 +160,53 @@ BasicGame.Game.prototype = {
 
   },
 
+  setupAudio: function () {
+    this.loseSFX = this.add.audio('lose');
+    this.buoysSFX = this.add.audio('yeah');
+  },
+
+  setupText: function(){ // à mettre dans une fonction (pas le temps)
+    this.score = 0;
+    this.buoysScore = 0;
+
+    this.instructions = this.add.text( this.world.centerX, this.world.height - 40,
+      'Montre nous que tu n\'as pas besoin\nde te laisser pousser les cheveux\npour être un champion de la glisse !',
+      { font: '20px monospace', fill: '#fff', align: 'center' }
+    );
+    this.instructions.anchor.setTo(0.5, 0.5);
+    this.instExpire = this.time.now + 6000;
+
+    this.instructions2 = this.add.text( this.world.centerX, this.world.height - 40,
+      'Incline l\'appareil pour surfer !\nPasse entre les bouées.\n Et évite de te faire engloutir...',
+      { font: '20px monospace', fill: 'red', align: 'center' }
+    );
+    this.instructions2.anchor.setTo(0.5, 0.5);
+    this.instructions2.visible = false;
+
+    this.finalInfos = this.add.text( this.world.centerX, this.world.centerY - 20,
+      'Tu viens de nourrir les requins.\nMiam ! L\'aventure s\'arrête ici.',
+      { font: '20px monospace', fill: '#fff', align: 'center' }
+    );
+    this.finalInfos.anchor.setTo(0.5, 0.5);
+    this.finalInfos.visible = false;
+
+    this.finalScore = this.add.text( this.world.centerX, this.world.centerY + 40,
+      'Ton score : ' + this.score,
+      { font: '32px monospace', fill: 'green', align: 'center' }
+    );
+    this.finalScore.anchor.setTo(0.5, 0.5);
+    this.finalScore.visible = false;
+
+    this.scoreText = this.add.text(
+    this.world.centerX, 20, '' + this.score,
+    { font: '20px monospace', fill: '#fff', align: 'center' }
+    );
+    this.scoreText.anchor.setTo(0.5, 0.5);
+  },
+
   checkCollisions: function () {
     this.physics.arcade.overlap(this.player, this.sharkPool, this.sharkEatPlayer, null, this);
+    this.physics.arcade.overlap(this.player, this.buoysPool, this.hitBuoys, null, this);
   },
 
   processPlayerInput: function() {
@@ -216,10 +294,30 @@ BasicGame.Game.prototype = {
 
   },
 
+  spawnBuoys: function () {
+    this.nextBuoyAt = 0;
+    this.buoyDelay = 5000;
+
+    if (this.nextBuoyAt < this.time.now && this.buoysPool.countDead() > 0) {
+      this.nextBuoyAt = this.time.now + this.buoyDelay;
+      var buoy = this.buoysPool.getFirstExists(false);
+      buoy.speed = 150;
+      var startbuoyX = this.rnd.integerInRange(0, this.world.width);
+      var startbuoyY = this.rnd.integerInRange(0, this.world.height);
+
+      buoy.reset(this.rnd.integerInRange(25, this.world.width - buoy.width), 0)
+      buoy.body.velocity.y = buoy.speed;
+      buoy.play('display', 20, true, true);
+    }
+
+  },
+
   sharkEatPlayer: function () {
     navigator.vibrate([100, 30, 100]);
     this.player.kill();
+    this.loseSFX.play();
   },
+
 
   sharkToLeft: function (shark) {
     // on inverse la position du sprite (mode mirroir)
@@ -235,5 +333,38 @@ BasicGame.Game.prototype = {
     shark.body.velocity.x = shark.speed;
   },
 
+
+  processDelayedEffects: function () {
+    if (this.instructions.exists && this.time.now > this.instExpire) {
+      this.instructions.destroy();
+      this.instructions2.visible = true;
+    }
+
+    if (this.instructions2.exists && this.time.now > this.instExpire*1.5) {
+      this.instructions2.destroy();
+    }
+
+    if (!this.player.exists) {
+      this.finalInfos.visible = true;
+      this.finalScore.visible = true;
+      this.scoreText.visible = false;
+      this.finalScore.text = 'Ton score : ' + this.score;
+    }
+  },
+
+  hitBuoys: function (player, buoy) {
+    buoy.kill();
+    this.buoysScore += 20;
+    this.buoysSFX.play();
+    player.play('rotate');
+
+  },
+
+  addToScore: function () {
+    if (this.player.exists) {
+      scoreFinal = this.score = Math.round(this.time.now*0.001) + this.buoysScore;
+      this.scoreText.text = this.score;
+    }
+  },
 
 };
