@@ -9,14 +9,28 @@
 <author>Intel XDK</author>
 <content src="index.html"/>
 <access origin="*"/>
+<icon platform="ios" src="icon.png" width="180" height="180"/>
+<icon platform="ios" src="icons/icon-120x120.png" width="120" height="120"/>
+<icon platform="ios" src="icons/icon-60x60.png" width="60" height="60"/>
+<icon platform="ios" src="icons/icon-152x152.png" width="152" height="152"/>
+<icon platform="ios" src="icons/icon-76x76.png" width="76" height="76"/>
+<splash platform="ios" src="splashscreen-1536x2048.png" width="1536" height="2048" orientation="portrait"/>
+<splash platform="ios" src="splashscreen-320x480.png" width="320" height="480" orientation="portrait"/>
+<splash platform="ios" src="splashscreen-640x960.png" width="640" height="960" orientation="portrait"/>
+<splash platform="ios" src="splashscreen-640x1136.png" width="640" height="1136" orientation="portrait"/>
+<splash platform="ios" src="splashscreen-1242x2208.png" width="1242" height="2208" orientation="portrait"/>
+<splash platform="ios" src="splashscreen-750x1334.png" width="750" height="1334" orientation="portrait"/>
+<splash platform="ios" src="splashscreen-768x1024.png" width="768" height="1024" orientation="portrait"/>
 <intelxdk:plugin intelxdk:name="StatusBar" intelxdk:value="cordova-plugin-statusbar" intelxdk:version="1.0.0" intelxdk:checksum="b4e7aac6"/>
 <intelxdk:plugin intelxdk:name="Device" intelxdk:value="cordova-plugin-device" intelxdk:version="1.0.1" intelxdk:checksum="adfc61ba"/>
 <intelxdk:plugin intelxdk:name="Splashscreen" intelxdk:value="cordova-plugin-splashscreen" intelxdk:version="2.1.0" intelxdk:checksum="170efb68"/>
 <intelxdk:plugin intelxdk:name="Vibration" intelxdk:value="cordova-plugin-vibration" intelxdk:version="1.2.0" intelxdk:checksum="3394f863"/>
-<preference name="ios-target" value="6"/>
+<intelxdk:plugin intelxdk:name="Device Motion" intelxdk:value="cordova-plugin-device-motion" intelxdk:version="1.1.1" intelxdk:checksum="132d4c05"/>
+<preference name="ios-target" value="7.0"/>
 <preference name="ios-configuration" value="adhoc"/>
 <preference name="Fullscreen" value="true"/>
 <preference name="Orientation" value="portrait"/>
+<intelxdk:provisioning intelxdk:src="XC_Ad_Hoc_.mobileprovision" intelxdk:type="adhoc"/>
 <!--creationInfo:{"projectTypeName":"com.intel.xdk.projecttype.jsapp"}-->
 <preference name="debuggable" value="false"/>
 <platform name="ios">
