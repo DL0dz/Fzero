@@ -55,7 +55,7 @@ BasicGame.Game.prototype = {
     // Here we load the assets required for our preloader (in this case a
     // background and a loading bar)
     //this.load.image('sea', 'asset/sea.jpg');
-    this.load.spritesheet('player', 'asset/surferCat.png', 50, 72);
+    this.load.spritesheet('player', 'asset/surferCat.png', 27, 36);
     this.load.spritesheet('shark', 'asset/shark.png', 100, 80);
 
   },
