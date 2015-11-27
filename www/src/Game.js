@@ -55,9 +55,11 @@ BasicGame.Game.prototype = {
     // Here we load the assets required for our preloader (in this case a
     // background and a loading bar)
     //this.load.image('sea', 'asset/sea.jpg');
+    this.load.spritesheet('buoy', 'asset/buoy.png', 74, 14);
     this.load.spritesheet('player', 'asset/surferCat.png', 27, 36);
     this.load.spritesheet('shark', 'asset/shark.png', 100, 80);
     this.load.audio('lose', ['asset/lose.ogg']);
+    this.load.audio('yeah', ['asset/buoy.ogg']);
 
   },
 
@@ -65,6 +67,7 @@ BasicGame.Game.prototype = {
     this.stage.backgroundColor = '#66CCFF';
     //this.sea = this.add.tileSprite(0, 0, 1024, 768, 'sea');
     this.setupPlayer();
+    this.setupBuoys();
     this.setupEnemies();
     this.setupText();
     this.setupAudio();
@@ -76,18 +79,19 @@ BasicGame.Game.prototype = {
   update: function () {
     this.checkCollisions();
     this.processPlayerInput();
+    this.spawnBuoys();
     this.spawnEnemies();
     this.processDelayedEffects();
     this.addToScore();
   },
 
   render: function () {
-    // this.sharkPool.forEachAlive(this.renderGroup, this);
+    //this.buoysPool.forEachAlive(this.renderGroup, this);
     // this.game.debug.body(this.player);
   },
 
   renderGroup: function (member) {
-    this.game.debug.body(member);
+    //this.game.debug.body(member);
   },
 
   setupPlayer: function(){
@@ -103,6 +107,28 @@ BasicGame.Game.prototype = {
     this.player.animations.add('rotate', [3, 4, 5], 20, false);
     this.player.animations.add('died', [6], 20, true);
     this.player.play('surf');
+
+  },
+
+  setupBuoys: function(){
+    this.nextBuoyAt = 1000;
+    this.buoyDelay = 3000;
+
+    this.buoysPool = this.add.group();
+    this.buoysPool.enableBody = true;
+    this.buoysPool.physicsBodyType = Phaser.Physics.ARCADE;
+    this.buoysPool.createMultiple(1, 'buoy');
+    this.buoysPool.setAll('anchor.x', 0.5);
+    this.buoysPool.setAll('anchor.y', 0.5);
+    this.buoysPool.setAll('outOfBoundsKill', true);
+    this.buoysPool.setAll('checkWorldBounds', true);
+    this.buoysPool.speed = 250;
+
+    // Set the animation for each sprite
+    this.buoysPool.forEach(function (buoys) {
+      buoys.body.setSize(20, 5, 0, 0);
+      buoys.animations.add('display', [0], true);
+    });
 
   },
 
@@ -174,6 +200,7 @@ BasicGame.Game.prototype = {
 
   checkCollisions: function () {
     this.physics.arcade.overlap(this.player, this.sharkPool, this.sharkEatPlayer, null, this);
+    this.physics.arcade.overlap(this.player, this.buoysPool, this.hitBuoys, null, this);
   },
 
   processPlayerInput: function() {
@@ -187,7 +214,7 @@ BasicGame.Game.prototype = {
       this.player.play('surfRight');
       this.player.body.velocity.x = this.player.speed;
     } else {
-      this.player.play('surf');
+      this.player.play('rotate');
     }
     if (this.cursors.up.isDown) {
       this.player.body.velocity.y = -this.player.speed;
@@ -246,6 +273,24 @@ BasicGame.Game.prototype = {
 
   },
 
+  spawnBuoys: function () {
+    this.nextBuoyAt = 0;
+    this.buoyDelay = 5000;
+
+    if (this.nextBuoyAt < this.time.now && this.buoysPool.countDead() > 0) {
+      this.nextBuoyAt = this.time.now + this.buoyDelay;
+      var buoy = this.buoysPool.getFirstExists(false);
+      buoy.speed = 150;
+      var startbuoyX = this.rnd.integerInRange(0, this.world.width);
+      var startbuoyY = this.rnd.integerInRange(0, this.world.height);
+
+      buoy.reset(this.rnd.integerInRange(25, this.world.width - buoy.width), 0)
+      buoy.body.velocity.y = buoy.speed;
+      buoy.play('display', 20, true, true);
+    }
+
+  },
+
   sharkEatPlayer: function () {
     this.player.kill();
     this.loseSFX.play();
@@ -283,6 +328,14 @@ BasicGame.Game.prototype = {
       this.scoreText.visible = false;
       this.finalScore.text = 'Ton score : ' + this.score;
     }
+  },
+
+  hitBuoys: function (player, buoy) {
+    buoy.kill();
+    this.buoysScore += 20;
+    this.buoysSFX.play();
+    player.play('rotate');
+
   },
 
   addToScore: function () {
