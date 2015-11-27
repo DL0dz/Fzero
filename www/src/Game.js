@@ -65,6 +65,7 @@ BasicGame.Game.prototype = {
     //this.sea = this.add.tileSprite(0, 0, 1024, 768, 'sea');
     this.setupPlayer();
     this.setupEnemies();
+    this.setupText();
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -74,6 +75,7 @@ BasicGame.Game.prototype = {
     this.checkCollisions();
     this.processPlayerInput();
     this.spawnEnemies();
+    this.processDelayedEffects();
   },
 
   render: function () {
@@ -119,6 +121,29 @@ BasicGame.Game.prototype = {
       shark.animations.add('attack', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 7, false);
     });
 
+  },
+
+  setupText: function(){ //singe
+    this.instructions = this.add.text( this.world.centerX, this.world.height - 40,
+      'Montre nous que tu n\'as pas besoin\nde te laisser pousser les cheveux\npour être un champion de la glisse !',
+      { font: '20px monospace', fill: '#fff', align: 'center' }
+    );
+    this.instructions.anchor.setTo(0.5, 0.5);
+    this.instExpire = this.time.now + 6000;
+
+    this.instructions2 = this.add.text( this.world.centerX, this.world.height - 40,
+      'Incline l\'appareil pour surfer !\nPasse entre les bouées.\n Et évite de te faire engloutir...',
+      { font: '20px monospace', fill: 'red', align: 'center' }
+    );
+    this.instructions2.anchor.setTo(0.5, 0.5);
+    this.instructions2.visible = false;
+
+    this.score = 0;
+    this.scoreText = this.add.text(
+    this.world.centerX, 20, '' + this.score,
+    { font: '20px monospace', fill: '#fff', align: 'center' }
+    );
+    this.scoreText.anchor.setTo(0.5, 0.5);
   },
 
   checkCollisions: function () {
@@ -211,6 +236,18 @@ BasicGame.Game.prototype = {
     shark.body.setSize(50, 36, 15, 10);
     shark.scale.x *= shark.scale.x > 0 ? 1 : -1;
     shark.body.velocity.x = shark.speed;
+  },
+
+
+  processDelayedEffects: function () {
+    if (this.instructions.exists && this.time.now > this.instExpire) {
+      this.instructions.destroy();
+      this.instructions2.visible = true;
+    }
+
+    if (this.instructions2.exists && this.time.now > this.instExpire*1.5) {
+      this.instructions2.destroy();
+    }
   },
 
 
