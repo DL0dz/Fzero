@@ -94,7 +94,7 @@ BasicGame.Game.prototype = {
   render: function () {
     //this.buoysPool.forEachAlive(this.renderGroup, this);
     //this.sharkPool.forEachAlive(this.renderGroup, this);
-    // this.game.debug.body(this.player);
+     this.game.debug.body(this.player);
   },
 
   renderGroup: function (member) {
@@ -104,6 +104,7 @@ BasicGame.Game.prototype = {
   setupPlayer: function(){
     this.player = this.add.sprite(this.world.centerX, this.world.centerY, 'player');
     this.player.anchor.setTo(0.5, 0.5);
+    this.player.scale.setTo(1.5, 1.5);
     this.physics.enable(this.player, Phaser.Physics.ARCADE);
     this.player.body.collideWorldBounds = true;
     this.player.speed = 120;
@@ -140,7 +141,7 @@ BasicGame.Game.prototype = {
 
   setupEnemies: function(){
     this.nextEnemyAt = 0;
-    this.enemyDelay = 3000;
+    this.enemyDelay = 2000;
 
     this.sharkPool = this.add.group();
     this.sharkPool.enableBody = true;
@@ -229,7 +230,7 @@ BasicGame.Game.prototype = {
       }
 
       if (accelerometer.x >= -1 && accelerometer.x <= 1) {
-        this.player.play('surf');
+        this.player.play('rotate');
       }
 
       if(accelerometer.y < 0) {
@@ -251,7 +252,7 @@ BasicGame.Game.prototype = {
     };
     // on réduit l'intervalle d'appartion des ennemis très légèrement à chaque frame
     if (this.enemyDelay > 500) {
-      this.enemyDelay -= 0.2;
+      this.enemyDelay -= 0.4;
     }
 
     if (this.nextEnemyAt < this.time.now && this.sharkPool.countDead() > 0) {
